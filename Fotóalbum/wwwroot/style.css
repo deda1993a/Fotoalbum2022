@@ -1,0 +1,21 @@
+div.sideload {
+    background-color: lightblue;
+    width: 250px;
+    height: 700px;
+    overflow: scroll;
+    position: fixed;
+    top: 0;
+    right: 0;
+  }
+
+
+
+  #container {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+ 
+
+  #drag-items img {
+    height: 100px;
+  }
