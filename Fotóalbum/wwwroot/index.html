@@ -16,17 +16,36 @@
 </head>
 <body>
 
-    <div id="drag-drop-area"></div>
-    
 
+    <div id="pagesize">
+        <select name="page" id="page">
+            <option value="8">8 oldal</option>
+            <option value="16">16 oldal</option>
+            <option value="24">24 oldal</option>
+            <option value="32">32 oldal</option>
+        </select>
+        <input type="button" value="Létrehoz" onclick="createalbum()">
+        <div id="felirat"></div>
+    </div>
 
 
     <div id="container" style="background-color: lightcyan;"></div>
 
-    <div id="sideload" class="sideload">
-        <img src="1.bmp" alt="kep" onclick="klikk();" draggable="true">
-        <img src="2.bmp" alt="kep" onclick="klikk();" draggable="true">
-        <button type="button" onclick="upload()">Click Me!</button>
+    <div id="side" class="side">
+        <div>
+            <button type="button" onclick="upload()">Kép feltöltés</button><br>
+            <button type="button" onclick="select()">Kép kiválasztás</button><br>
+            <button type="button" onclick="deleteI()">Kép törlés</button><br>
+            <button type="button" onclick="backG()">Háttér kiválasztás</button>
+        </div>
+        <div id="drag-drop-area"></div>
+        <div id="sideload" class="sideload">
+
+            <img src="1.bmp" alt="kep" onclick="klikk();" draggable="true"><br>
+
+            <img src="2.bmp" alt="kep" onclick="klikk();" draggable="true">
+
+        </div>
     </div>
 
     <script src="source.js"></script>

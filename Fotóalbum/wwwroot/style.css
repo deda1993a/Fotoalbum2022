@@ -1,12 +1,12 @@
 div.sideload {
     background-color: lightblue;
-    width: 250px;
+    width: 200px;
     height: 700px;
     overflow: scroll;
     position: fixed;
     top: 0;
     right: 0;
-  }
+}
 
 
 
@@ -19,3 +19,16 @@ div.sideload {
   #drag-items img {
     height: 100px;
   }
+
+.image {
+    display: inline;
+}
+
+.side {
+    display: flex;
+    position: fixed;
+    width: 250px;
+    height: 700px;
+    top: 0;
+    right: 0;
+}
