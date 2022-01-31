@@ -126,8 +126,11 @@ con.addEventListener('drop', function (e) {
             layer.add(image);
             image.name('ez');
             image.position(stage.getPointerPosition());
+            image.src = itemURL;
+            image.setAttr('source', itemURL);
             image.draggable(true);
         });
+        
     } else {
         var imgtmp;
         Konva.Image.fromURL(itemURL, function (image) {
@@ -311,7 +314,41 @@ function backG() {
 
 function createalbum() {
     document.getElementById('felirat').innerHTML = page.value;
-   
+    if (size.value == 1) {
+        twidth = 794;
+        theight = 1123;
+    } else {
+        twidth = 1123;
+        theight = 794;
+    }
+    stage.width(twidth);
+    stage.height(theight);
+    var json = stage.toJSON();
+    console.log(json);
+    stage.clear();
+    stage = Konva.Node.create(json, 'container');
+    stage.find('Image').forEach(imageNode => {
+        const nativeImage = new window.Image();
+        nativeImage.onload = () => {
+            imageNode.image(nativeImage);
+            imageNode.getLayer().batchDraw();
+        }
+        nativeImage.src = imageNode.getAttr('source');
+    })
+    var tr = new Konva.Transformer();
+    layer.add(tr);
+
+    // by default select all shapes
+    tr.nodes([]);
+
+    // add a new feature, lets add ability to draw selection rectangle
+    var selectionRectangle = new Konva.Rect({
+        fill: 'rgba(0,0,255,0.5)',
+        visible: false,
+    });
+    layer.add(selectionRectangle);
+
+    var con = stage.container();
 }
 
 
