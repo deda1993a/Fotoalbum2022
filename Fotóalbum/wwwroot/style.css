@@ -10,8 +10,9 @@ div.sideload {
 
 
 
-  #container {
+#container {
     background-color: rgba(0, 0, 0, 0.1);
+    border-style: none;
   }
 
  
@@ -27,7 +28,7 @@ div.sideload {
 .side {
     display: flex;
     position: fixed;
-    width: 250px;
+    width: 320px;
     height: 700px;
     top: 0;
     right: 0;
