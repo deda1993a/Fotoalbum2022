@@ -58,8 +58,8 @@ stage.add(layer);
 /*var image1 = new Image();
 image1.onload = function () {
   var img1 = new Konva.Image({
-    x: 0,
-    y: 50,
+    x: 1110,
+    y: 1150,
     image: image1,
     name: 'ez',
     width: 106,
@@ -70,8 +70,8 @@ image1.onload = function () {
 
   layer.add(img1);
 };
-image1.src = '1.bmp';
-*/
+image1.src = '1.bmp';*/
+
 
 /*
 var image2 = new Image();
@@ -108,6 +108,20 @@ document
 
     });
 
+var Grscale = function (imageData) {
+    // make all pixels opaque 100%
+    var nPixels = imageData.data.length;
+    if (grscale == true)
+        for (var i = 0; i < nPixels; i += 4) {
+            brightness = 0.34 * imageData.data[i] + 0.5 * imageData.data[i + 1] + 0.16 * imageData.data[i + 2];
+            // red
+            imageData.data[i] = brightness;
+            // green
+            imageData.data[i + 1] = brightness;
+            // blue
+            imageData.data[i + 2] = brightness;
+        }
+};
 
 var con = stage.container();
 con.addEventListener('dragover', function (e) {
@@ -115,12 +129,18 @@ con.addEventListener('dragover', function (e) {
     //console.log(con);
 });
 
+var grscale = false;
 con.addEventListener('drop', function (e) {
     e.preventDefault();
     // now we need to find pointer position
     // we can't use stage.getPointerPosition() here, because that event
     // is not registered by Konva.Stage
     // we can register it manually:
+
+
+
+
+
     stage.setPointersPositions(e);
     if (backgroundC == false) {
         Konva.Image.fromURL(itemURL, function (image) {
@@ -132,25 +152,38 @@ con.addEventListener('drop', function (e) {
             console.log(image);
             console.log(layer);
             image.cache();
-            image.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance]);
+            image.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale]);
 
             var blur = document.getElementById('blur');
             blur.oninput = function () {
                 imagesel.blurRadius(blur.value);
+                imagesel.setAttr('blur', blur.value);
             };
 
             var brighten = document.getElementById('brighten');
             brighten.oninput = function () {
                 imagesel.brightness(brighten.value);
+                imagesel.setAttr('brighten', brighten.value);
             };
 
             var enhance = document.getElementById('enhance');
             enhance.oninput = function () {
                 imagesel.enhance(parseFloat(enhance.value));
+                imagesel.setAttr('enhance', parseFloat(enhance.value));
             };
 
+
             grayscale.onclick = function () {
-               
+                if (grscale == true) {
+                    grscale = false;
+                } else {
+                    grscale = true;
+                }
+                
+                imagesel.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale]);
+                layer.draw();
+                imagesel.setAttr('grscale', grscale);
+               // grscale = false;
             };
 
             layer.add(image);
@@ -352,7 +385,7 @@ function createalbum() {
 }
 
 function next() {
-
+    
     if (currentpage < page.value - 1) {
 
         console.log(stage);
@@ -365,11 +398,20 @@ function next() {
             const nativeImage = new window.Image();
             nativeImage.onload = () => {
                 imageNode.image(nativeImage);
+                //imageNode.name('ez');
+                grscale = imageNode.getAttr('grscale');
                 imageNode.getLayer().batchDraw();
+                imageNode.cache();
+                imageNode.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale]);
+                imageNode.blurRadius(imageNode.getAttr('blur'));
+                imageNode.brightness(imageNode.getAttr('brighten'));
+                imageNode.enhance(imageNode.getAttr('enhance'));
+
             }
             nativeImage.src = imageNode.getAttr('source');
-        })
 
+        })
+       
         stgevents();
 
         console.log(stage);
@@ -705,13 +747,17 @@ function crtpdf() {
     var pdf = new jsPDF('l', 'px', [stage.width(), stage.height()]);
     pdf.setTextColor('#000000');
 
+    for (let i = 0; i < json.length; i++) {
+        //pdf.addPage();
     pdf.addImage(
-        stage.toDataURL({ pixelRatio: 2 }),
+        layer.toDataURL({ pixelRatio: 2 }),
+        200,
         0,
-        0,
-        stage.width(),
-        stage.height()
-    );
+        twidth,
+        theight
+        );
+        
+    }
 
     pdf.save('canvas.pdf');
 

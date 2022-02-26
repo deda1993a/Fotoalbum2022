@@ -1,0 +1,46 @@
+﻿-szürkearány objektumonként ok
+-lapok elemeit is elmenti, mint az effekteket
+-
+
+
+
+
+
+function createSepiaFilter(val) {
+  return function(imageData) {
+    var data = imageData.data,
+      nPixels = data.length,
+      i,
+      r,
+      g,
+      b;
+
+    for (i = 0; i < nPixels; i += 4) {
+      r = data[i + 0];
+      g = data[i + 1];
+      b = data[i + 2];
+
+      data[i + 0] = Math.min(255, r * (0.393 + 0.607 * (1 - val))  + g * 0.769 * val + b * 0.189 * val);
+      data[i + 1] = Math.min(255, r * 0.349 * val + g * (0.686 + 0.314 * (1 - val)) + b * 0.168 * val);
+      data[i + 2] = Math.min(255, r * 0.272 * val + g * 0.534 * val + b * (0.131 + 0.869 * (1 - val)));
+    }
+  };
+}
+
+
+Konva.Image.fromURL('https://i.imgur.com/ktWThtZ.png', img => {
+  img.setAttrs({scaleX: 0.5, scaleY: 0.5});
+  layer.add(img);
+  
+  img.filters([createSepiaFilter(parseFloat(range.value))])
+  img.cache();
+  layer.draw();
+  
+  
+  
+  range.addEventListener('input', () => {
+    const val = parseFloat(range.value);
+    img.filters([createSepiaFilter(parseFloat(range.value))]);
+    layer.draw();
+  })
+});
