@@ -1,6 +1,7 @@
 var width = 1800;
 var height = 1842;
-var available=0;
+var available = 0;
+
 
 let str = [];
 var backgroundC=false;
@@ -145,7 +146,10 @@ con.addEventListener('drop', function (e) {
     if (backgroundC == false) {
         Konva.Image.fromURL(itemURL, function (image) {
             image.name('ez');
-            image.position(stage.getPointerPosition());
+            image.position({
+                x: stage.getPointerPosition().x - (twidth * currentpage),
+                y: stage.getPointerPosition().y
+            });
             image.src = itemURL;
             image.setAttr('source', itemURL);
             image.draggable(true);
@@ -385,10 +389,10 @@ function createalbum() {
 }
 
 function next() {
-    
+    layer.offsetX(layer.offsetX()-twidth);
     if (currentpage < page.value - 1) {
 
-        console.log(stage);
+        /*console.log(stage);
         console.log(json[currentpage]);
         if (json[currentpage]==null) {
             json.push(stage.toJSON());
@@ -424,7 +428,7 @@ function next() {
 
         console.log("uj:");
         console.log(stage);
-        
+        */
         currentpage++;
         document.getElementById('felirat').innerHTML = currentpage + 1 + "-" + page.value;
     }
@@ -432,10 +436,11 @@ function next() {
 
     function previous()
     {
+        layer.offsetX(layer.offsetX() + twidth);
         currentpage--;
         if (currentpage >=0) {
             //json[currentpage] = stage.toJSON();
-            console.log(json);
+           /* console.log(json);
             stage.destroy();
             layer.destroy();
             stage = Konva.Node.create(json[currentpage], 'container');
@@ -449,15 +454,15 @@ function next() {
             })
             
 
-            stgevents();
+            stgevents();*/
             // by default select all shapes
             
 
 
-            json[currentpage] = stage.toJSON();
+            /*json[currentpage] = stage.toJSON();
             layer.destroyChildren();
             layer.draw();
-            console.log("json: "+json[currentpage]);
+            console.log("json: "+json[currentpage]);*/
             document.getElementById('felirat').innerHTML = currentpage + 1 + "-" + page.value;
         }
 }
@@ -747,17 +752,17 @@ function crtpdf() {
     var pdf = new jsPDF('l', 'px', [stage.width(), stage.height()]);
     pdf.setTextColor('#000000');
 
-    for (let i = 0; i < json.length; i++) {
+   // for (let i = 0; i < json.length; i++) {
         //pdf.addPage();
     pdf.addImage(
-        layer.toDataURL({ pixelRatio: 2 }),
-        200,
+        stage.toDataURL({ pixelRatio: 2 }),
+        0,
         0,
         twidth,
         theight
         );
         
-    }
+    //}
 
     pdf.save('canvas.pdf');
 
