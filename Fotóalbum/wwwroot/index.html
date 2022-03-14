@@ -48,7 +48,8 @@
             <button type="button" style="height:22px; width: 112px;" onclick="deleteI()">Kép törlés</button><br>
             <button type="button" style="height:22px; width: 112px;" onclick="backG()">Háttér kiválasztás</button><br>
             <button type="button" style="height:22px; width: 112px;" onclick="painttool()">Rajzoló eszköz</button><br>
-            <button type="button" style="height:22px; width: 112px;" onclick="filters()">Filterek</button>
+            <button type="button" style="height:22px; width: 112px;" onclick="filters()">Filterek</button><br>
+            <button type="button" style="height:22px; width: 112px;" onclick="stamps()">Pecsétek</button>
         </div>
         <div id="drag-drop-area"></div>
         <div id="sideload" class="sideload">
@@ -91,8 +92,11 @@
                 <button type="button" id="grayscale">Átalakít</button>
             </div>
         </div>
-    </div>
+        <div id="stamps" class="sideload" hidden>
+            <img src="star.png" alt="kep" width="200" height="150" onclick="klikk();" draggable="true">
+        </div>
+        </div>
 
-    <script src="source.js"></script>
+        <script src="source.js"></script>
 </body>
 </html>

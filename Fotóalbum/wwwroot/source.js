@@ -579,6 +579,11 @@ function stgevents() {
             tr.nodes(nodes);
         }
     });
+
+    stage.on('mousemove', function (e) {
+        //var pos = group.getRelativePointerPosition()
+        console.log(stage.getPointerPosition());
+    });
 }
 
 function addtext() {
@@ -749,7 +754,7 @@ function addtext() {
 }
 
 function crtpdf() {
-    var pdf = new jsPDF('l', 'px', [stage.width(), stage.height()]);
+    var pdf = new jsPDF('l', 'px', [theight, twidth]);
     pdf.setTextColor('#000000');
 
    // for (let i = 0; i < json.length; i++) {
@@ -758,12 +763,20 @@ function crtpdf() {
         stage.toDataURL({ pixelRatio: 2 }),
         0,
         0,
-        twidth,
-        theight
+        stage.width(),
+        stage.height()
         );
         
     //}
 
     pdf.save('canvas.pdf');
 
+}
+
+function stamps() {
+    sideload.hidden = false;
+    document.getElementById("drag-drop-area").hidden = true;
+    backgroundC = false;
+    paintitems.hidden = true;
+    document.getElementById("stamps").hidden = false;
 }
