@@ -1,5 +1,5 @@
 var width = 1800;
-var height = 1842;
+var height = 1800;
 var available = 0;
 
 
@@ -106,7 +106,6 @@ document
     .getElementById('sideload')
     .addEventListener('dragstart', function (e) {
         itemURL = e.target.src;
-
     });
 
 var Grscale = function (imageData) {
@@ -144,6 +143,7 @@ con.addEventListener('drop', function (e) {
 
     stage.setPointersPositions(e);
     if (backgroundC == false) {
+        //console.log("itemurl:"+itemURL);
         Konva.Image.fromURL(itemURL, function (image) {
             image.name('ez');
             image.position({
@@ -154,7 +154,7 @@ con.addEventListener('drop', function (e) {
             image.setAttr('source', itemURL);
             image.draggable(true);
             console.log(image);
-            console.log(layer);
+            console.log(layer);          
             image.cache();
             image.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale]);
 
@@ -189,7 +189,7 @@ con.addEventListener('drop', function (e) {
                 imagesel.setAttr('grscale', grscale);
                // grscale = false;
             };
-
+            console.log("megy");
             layer.add(image);
             stage.add(layer);
         });
@@ -369,11 +369,12 @@ function depainter() {
 }
 
 let json = [];
+let stdata = [];
 function createalbum() {
     document.getElementById("container").style.borderStyle="solid";
     if (size.value == 1) {
-        twidth = 794;
-        theight = 1123;
+        twidth = 793.706;
+        theight = 1122.52;
     } else {
         twidth = 1123;
         theight = 794;
@@ -383,6 +384,10 @@ function createalbum() {
     stage.height(theight);
     //document.querySelector('container').clientHeight = theight + "px";
     //document.querySelector('container').clientWidth = twidth + "px";
+
+    for (i = 0; i < page.value - 1; i++) {
+        stdata[i] = stage.toDataURL({ pixelRatio: 2 });
+    }
 
     currentpage = 0;
     document.getElementById('felirat').innerHTML = currentpage+1+"-"+ page.value;
@@ -582,7 +587,8 @@ function stgevents() {
 
     stage.on('mousemove', function (e) {
         //var pos = group.getRelativePointerPosition()
-        console.log(stage.getPointerPosition());
+        // console.log(stage.getPointerPosition());
+        console.log("stage width: " + stage.width() + " stage height: " + stage.height());
     });
 }
 
@@ -754,29 +760,69 @@ function addtext() {
 }
 
 function crtpdf() {
-    var pdf = new jsPDF('l', 'px', [theight, twidth]);
+    var pdf = new jsPDF('p', 'pt', [793.706, 1122.52]);
     pdf.setTextColor('#000000');
 
-   // for (let i = 0; i < json.length; i++) {
-        //pdf.addPage();
+    for (i = 0; i < page.value-1; i++) {
+        pdf.addPage();
     pdf.addImage(
-        stage.toDataURL({ pixelRatio: 2 }),
+        stdata[i],
         0,
         0,
         stage.width(),
         stage.height()
         );
         
-    //}
+    }
 
     pdf.save('canvas.pdf');
 
 }
 
 function stamps() {
-    sideload.hidden = false;
+    sideload.hidden = true;
     document.getElementById("drag-drop-area").hidden = true;
     backgroundC = false;
     paintitems.hidden = true;
     document.getElementById("stamps").hidden = false;
+}
+
+var selStamp;
+
+var itemURL = '';
+document
+    .getElementById('stamps')
+    .addEventListener('click', function (e) {
+        itemURL = e.target.src;
+        console.log("dragstart");
+    });
+
+function paintstamp() {
+
+    //itemURL = target.src;
+
+    stage.on('click', function (e) {
+        
+        //stage.setPointersPositions(e);
+        
+        Konva.Image.fromURL(itemURL, function (image) {
+            image.name('ez');
+            image.position({
+                x: stage.getPointerPosition().x - (twidth * currentpage),
+                y: stage.getPointerPosition().y 
+            });
+            image.src = itemURL;
+            image.scaleX(0.030);
+            image.scaleY(0.030);
+            image.setAttr('source', itemURL);
+            image.draggable(true);
+            layer.add(image);
+            stage.add(layer);
+
+        });
+        
+      
+    });
+
+
 }
