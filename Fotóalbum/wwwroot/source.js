@@ -385,7 +385,7 @@ function createalbum() {
     //document.querySelector('container').clientHeight = theight + "px";
     //document.querySelector('container').clientWidth = twidth + "px";
 
-    for (i = 0; i < page.value - 1; i++) {
+    for (i = 0; i < page.value; i++) {
         stdata[i] = stage.toDataURL({ pixelRatio: 2 });
     }
 
@@ -394,9 +394,10 @@ function createalbum() {
 }
 
 function next() {
-    layer.offsetX(layer.offsetX()-twidth);
+    
     if (currentpage < page.value - 1) {
-
+        stdata[currentpage] = stage.toDataURL({ pixelRatio: 2 });
+        layer.offsetX(layer.offsetX() - twidth);
         /*console.log(stage);
         console.log(json[currentpage]);
         if (json[currentpage]==null) {
@@ -441,9 +442,12 @@ function next() {
 
     function previous()
     {
-        layer.offsetX(layer.offsetX() + twidth);
-        currentpage--;
-        if (currentpage >=0) {
+
+        if (currentpage > 0) {
+            stdata[currentpage] = stage.toDataURL({ pixelRatio: 2 });
+            layer.offsetX(layer.offsetX() + twidth);
+            currentpage--;
+            
             //json[currentpage] = stage.toJSON();
            /* console.log(json);
             stage.destroy();
@@ -760,11 +764,12 @@ function addtext() {
 }
 
 function crtpdf() {
+    stdata[currentpage] = stage.toDataURL({ pixelRatio: 2 });
     var pdf = new jsPDF('p', 'pt', [793.706, 1122.52]);
     pdf.setTextColor('#000000');
 
-    for (i = 0; i < page.value-1; i++) {
-        pdf.addPage();
+    for (i = 0; i < page.value; i++) {
+        
     pdf.addImage(
         stdata[i],
         0,
@@ -772,7 +777,9 @@ function crtpdf() {
         stage.width(),
         stage.height()
         );
-        
+        if (page.value-1 > i) {
+            pdf.addPage();
+        }
     }
 
     pdf.save('canvas.pdf');
