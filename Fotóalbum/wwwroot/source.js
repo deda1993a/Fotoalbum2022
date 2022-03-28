@@ -56,11 +56,11 @@ var layer = new Konva.Layer();
 //layer.offsetX = 1400;
 stage.add(layer);
 
-/*var image1 = new Image();
+var image1 = new Image();
 image1.onload = function () {
   var img1 = new Konva.Image({
     x: 1110,
-    y: 1150,
+    y: 2500,
     image: image1,
     name: 'ez',
     width: 106,
@@ -71,7 +71,7 @@ image1.onload = function () {
 
   layer.add(img1);
 };
-image1.src = '1.bmp';*/
+image1.src = 'background1.jpg';
 
 
 /*
@@ -203,9 +203,10 @@ con.addEventListener('drop', function (e) {
             image.position(stage.getPointerPosition());
            
         });
+        for(i=0;i<page.value;i++){
         var background = new Konva.Rect({
-
-            x: 0,
+            
+            x: layer.offsetX(),
             y: 0,
             width: stage.width(),
             height: stage.height(),
@@ -215,6 +216,7 @@ con.addEventListener('drop', function (e) {
             // because we don't need any events on the background
             listening: false,
         });
+        }
         layer.add(background);
     }
 });
@@ -375,9 +377,11 @@ function createalbum() {
     if (size.value == 1) {
         twidth = 793.706;
         theight = 1122.52;
+        slmode='p';
     } else {
-        twidth = 1123;
-        theight = 794;
+        twidth = 1122.52;
+        theight = 793.706;
+        slmode='l';
     }
     con = stage.container();
     stage.width(twidth);
@@ -763,9 +767,11 @@ function addtext() {
     });
 }
 
+var slmode;
+
 function crtpdf() {
     stdata[currentpage] = stage.toDataURL({ pixelRatio: 2 });
-    var pdf = new jsPDF('p', 'pt', [793.706, 1122.52]);
+    var pdf = new jsPDF(slmode, 'pt', [twidth, theight]);
     pdf.setTextColor('#000000');
 
     for (i = 0; i < page.value; i++) {
@@ -804,6 +810,7 @@ document
         console.log("dragstart");
     });
 
+    var selectedstamp=false;
 function paintstamp() {
 
     //itemURL = target.src;
@@ -811,7 +818,7 @@ function paintstamp() {
     stage.on('click', function (e) {
         
         //stage.setPointersPositions(e);
-        
+        if(selectedstamp=true){
         Konva.Image.fromURL(itemURL, function (image) {
             image.name('ez');
             image.position({
@@ -827,9 +834,13 @@ function paintstamp() {
             stage.add(layer);
 
         });
-        
+        }
       
     });
 
 
 }
+
+    function deselectstamp(){
+     selectedstamp=false;
+	}
