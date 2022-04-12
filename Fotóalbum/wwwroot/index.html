@@ -65,6 +65,22 @@
                 <option value="brush">Ecset</option>
                 <option value="eraser">Radír</option>
             </select>
+        
+            <select id="colourselect">
+                <option value="red">Piros</option>
+                <option value="black">Fekete</option>
+                <option value="green">Zöld</option>
+                <option value="blue">Kék</option>
+            </select><br>
+                <select id="strokewidth">
+                <option value="1">1-es vastagság</option>
+                <option value="2">2-es vastagság</option>
+                <option value="3">3-as vastagság</option>
+                <option value="4">4-es vastagság</option>
+                <option value="5">5-ös vastasság</option>
+            </select>
+            <br>
+
             <button type="button" onclick="painter()">Ecset kiválasztás</button>
             <button type="button" onclick="depainter()">Kiválasztó eszköz</button><br><br>
             <button type="button" onclick="addtext()">Szöveg hozzáadása</button>
@@ -72,13 +88,32 @@
                 <option value="Arial">Arial</option>
                 <option value="Calibri">Calibri</option>
                 <option value="Kavivanar">Kavivanar</option>
+                <option value="Garamond">Garamond</option>
+                <option value="Courier New">Courier New</option>
+                <option value="Brush Script MT">Brush Script MT</option>
+                 <option value="Verdana ">Verdana</option>
             </select>
             <select id="fontsize">
                 <option value="10">10</option>
                 <option value="11">11</option>
                 <option value="12">12</option>
                 <option value="20">20</option>
-            </select>
+                <option value="25">25</option>
+                <option value="30">30</option>
+                <option value="35">35</option>
+                <option value="40">40</option>
+                <option value="45">45</option>
+                <option value="50">50</option>
+                <option value="55">55</option>
+                <option value="60">60</option>
+            </select></br>
+                <select id="fontcolour">
+                <option value="red">Piros</option>
+                <option value="black">Fekete</option>
+                <option value="green">Zöld</option>
+                <option value="blue">Kék</option>
+                </select>
+
             <input type="text" id="tx">
         </div>
         <div id="filters" class="sideload" hidden>
@@ -90,7 +125,15 @@
                 <label for="enhance">Kiemelés</label>
                 <input id="enhance" type="range" min="-1" max="1" step="0.01" value="20" />
                 <label for="grayscale">Szürkeárnyalat</label>
-                <button type="button" id="grayscale">Átalakít</button>
+                <button type="button" id="grayscale">Átalakít</button><br><br>
+                <button type="button" id="filterbackg" onclick="backgroundfilter()">Háttér filter</button><br>
+                <label for="bscale">Háttér nagyság</label>
+                <input type="range" min="0" max="1.50" value="0" step="0.10" id="bscale"><br>
+                <label for="xoff">Háttér eltolása vízszintesen</label>
+                <input type="range" min="0" max="300" value="0"  id="xoff">
+                <label for="yoff">Háttér eltolása függőlegesen</label>
+                <input type="range" min="0" max="300" value="0"  id="yoff">
+
             </div>
         </div>
         <div id="stamps" class="sideload" hidden>

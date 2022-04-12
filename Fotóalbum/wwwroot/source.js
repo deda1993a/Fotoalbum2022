@@ -5,6 +5,7 @@ var available = 0;
 
 let str = [];
 var backgroundC=false;
+var background;
 
 const { XHRUpload } = Uppy;
 
@@ -67,8 +68,8 @@ image1.onload = function () {
     height: 118,
     draggable: true,
   });
-
-
+  image1.cache();
+  image1.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale]),
   layer.add(img1);
 };
 image1.src = 'background1.jpg';
@@ -175,6 +176,7 @@ con.addEventListener('drop', function (e) {
                 imagesel.enhance(parseFloat(enhance.value));
                 imagesel.setAttr('enhance', parseFloat(enhance.value));
             };
+            
 
 
             grayscale.onclick = function () {
@@ -204,7 +206,7 @@ con.addEventListener('drop', function (e) {
            
         });
         for(i=0;i<page.value;i++){
-        var background = new Konva.Rect({
+         background = new Konva.Rect({
             
             x: layer.offsetX(),
             y: 0,
@@ -304,9 +306,10 @@ function painter() {
 
     // Good. Now we need to get access to context element
     var context = canvas.getContext('2d');
-    context.strokeStyle = '#df4b26';
+    context.strokeStyle = colourselect.value;
+    //context.strokeStyle = '#df4b26';
     context.lineJoin = 'round';
-    context.lineWidth = 5;
+    context.lineWidth = strokewidth.value;
 
     var isPaint = false;
     var lastPointerPosition;
@@ -608,6 +611,7 @@ function addtext() {
         fontFamily: fonttype.value,
         fontSize: fontsize.value,
         draggable: true,
+        fill: fontcolour.value,
         width: 200,
     });
 
@@ -844,3 +848,34 @@ function paintstamp() {
     function deselectstamp(){
      selectedstamp=false;
 	}
+
+    function backgroundfilter(){
+      imagesel=background;
+      console.log(imagesel);
+      //background.fillPatternImage(image1);
+	}
+
+
+                var bscale = document.getElementById('bscale');
+            bscale.oninput = function () {
+                //imagesel.bscale(parseFloat(bscale.value));
+                //imagesel.setAttr('bscale', parseFloat(bscale.value));
+                background.fillPatternScale({x: bscale.value, y: bscale.value});
+                //console.log(background);
+            };
+
+              var xoff = document.getElementById('xoff');
+            xoff.oninput = function () {
+                //imagesel.bscale(parseFloat(bscale.value));
+                //imagesel.setAttr('bscale', parseFloat(bscale.value));
+                background.fillPatternOffsetX(xoff.value);
+                //console.log(background);
+            };
+
+              var yoff = document.getElementById('yoff');
+            yoff.oninput = function () {
+                //imagesel.bscale(parseFloat(bscale.value));
+                //imagesel.setAttr('bscale', parseFloat(bscale.value));
+                background.fillPatternOffsetY(yoff.value);
+                //console.log(background);
+            };
