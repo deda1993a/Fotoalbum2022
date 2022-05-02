@@ -30,10 +30,12 @@
         <select name="size" id="size">
             <option value="1">A4 álló</option>
             <option value="2">A4 fekvő</option>
+            <option value="3">30x30cm</option>
         </select>
         <input type="button" value="Létrehoz" onclick="createalbum()">
         <input type="button" value="<-" onclick="previous()">
         <input type="button" value="->" onclick="next()">
+        <input type="button" id="addpg" value="2 lap hozzáadása" onclick="addpage()">
         <input type="button" value="Pdf mentése" onclick="crtpdf()">
         <div id="felirat"></div>
     </div>
@@ -106,7 +108,7 @@
                 <option value="50">50</option>
                 <option value="55">55</option>
                 <option value="60">60</option>
-            </select></br>
+            </select><br>
                 <select id="fontcolour">
                 <option value="red">Piros</option>
                 <option value="black">Fekete</option>

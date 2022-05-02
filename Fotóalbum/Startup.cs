@@ -54,27 +54,19 @@ namespace Fotóalbum
       
 
             app.UseEndpoints(endpoints =>
-
-            {
-
-                endpoints.MapGet("/", context =>
-
                 {
-
+                endpoints.MapGet("/", context =>
+                {
                     context.Response.Redirect("/index.html", permanent: false);
-
                     return Task.FromResult(0);
-
                 });
-
                 endpoints.MapControllers();
                 endpoints.MapControllerRoute(
                     name: "Upload",
                     pattern:"Upload",
                     defaults: new {controller="Upload", action= "OnPostUppy" }
                     );
-
-            });
+                 });
         }
     }
 }

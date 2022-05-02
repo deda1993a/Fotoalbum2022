@@ -1,11 +1,14 @@
 var width = 1800;
 var height = 1800;
 var available = 0;
+var allpage;
+var tempstage;
 
 
 let str = [];
 var backgroundC=false;
 var background;
+var mode = 0;
 
 const { XHRUpload } = Uppy;
 
@@ -68,7 +71,7 @@ image1.onload = function () {
     height: 118,
     draggable: true,
   });
-  image1.cache();
+  //image1.cache();
   image1.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale]),
   layer.add(img1);
 };
@@ -205,7 +208,7 @@ con.addEventListener('drop', function (e) {
             image.position(stage.getPointerPosition());
            
         });
-        for(i=0;i<page.value;i++){
+        for(i=0;i<allpage;i++){
          background = new Konva.Rect({
             
             x: layer.offsetX(),
@@ -290,6 +293,7 @@ function filters() {
 
 }
 
+var drw;
 function painter() {
     // then we are going to draw into special canvas element
     var canvas = document.createElement('canvas');
@@ -302,6 +306,7 @@ function painter() {
         x: 0,
         y: 0,
     });
+    drw = image;
     layer.add(image);
 
     // Good. Now we need to get access to context element
@@ -369,22 +374,29 @@ function painter() {
 }
 
 function depainter() {
+    drw.moveToBottom();
     stage.off();
     stgevents();
+    
 }
 
 let json = [];
 let stdata = [];
 function createalbum() {
+    allpage = parseInt(page.value);
     document.getElementById("container").style.borderStyle="solid";
     if (size.value == 1) {
-        twidth = 793.706;
-        theight = 1122.52;
-        slmode='p';
+        twidth = 794;
+        theight = 1123;
+        slmode = 'p';
+    } else if (size.value == 2) {
+        twidth = 1123;
+        theight = 794;
+        slmode = 'l';
     } else {
-        twidth = 1122.52;
-        theight = 793.706;
-        slmode='l';
+        twidth = 1134;
+        theight = 1134;
+        slmode = 'p';
     }
     con = stage.container();
     stage.width(twidth);
@@ -392,58 +404,22 @@ function createalbum() {
     //document.querySelector('container').clientHeight = theight + "px";
     //document.querySelector('container').clientWidth = twidth + "px";
 
-    for (i = 0; i < page.value; i++) {
+    for (i = 0; i < allpage; i++) {
+        tempstage = stage.toDataURL({ pixelRatio: 2 });
         stdata[i] = stage.toDataURL({ pixelRatio: 2 });
     }
 
     currentpage = 0;
-    document.getElementById('felirat').innerHTML = currentpage+1+"-"+ page.value;
+    document.getElementById('felirat').innerHTML = currentpage + 1 + "-" + allpage;
 }
 
 function next() {
-    
-    if (currentpage < page.value - 1) {
+
+    if (currentpage < allpage - 1) {
         stdata[currentpage] = stage.toDataURL({ pixelRatio: 2 });
         layer.offsetX(layer.offsetX() - twidth);
-        /*console.log(stage);
-        console.log(json[currentpage]);
-        if (json[currentpage]==null) {
-            json.push(stage.toJSON());
-        }
-        stage = Konva.Node.create(json[currentpage], 'container');
-        stage.find('Image').forEach(imageNode => {
-            const nativeImage = new window.Image();
-            nativeImage.onload = () => {
-                imageNode.image(nativeImage);
-                //imageNode.name('ez');
-                grscale = imageNode.getAttr('grscale');
-                imageNode.getLayer().batchDraw();
-                imageNode.cache();
-                imageNode.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale]);
-                imageNode.blurRadius(imageNode.getAttr('blur'));
-                imageNode.brightness(imageNode.getAttr('brighten'));
-                imageNode.enhance(imageNode.getAttr('enhance'));
-
-            }
-            nativeImage.src = imageNode.getAttr('source');
-
-        })
-       
-        stgevents();
-
-        console.log(stage);
-        json[currentpage]=stage.toJSON();
-        console.log("elso"+json[currentpage]);
-        
-        //layer.destroy();
-        layer.destroyChildren();
-        layer.draw();
-
-        console.log("uj:");
-        console.log(stage);
-        */
         currentpage++;
-        document.getElementById('felirat').innerHTML = currentpage + 1 + "-" + page.value;
+        document.getElementById('felirat').innerHTML = currentpage + 1 + "-" + allpage;
     }
 }
 
@@ -454,34 +430,19 @@ function next() {
             stdata[currentpage] = stage.toDataURL({ pixelRatio: 2 });
             layer.offsetX(layer.offsetX() + twidth);
             currentpage--;
-            
-            //json[currentpage] = stage.toJSON();
-           /* console.log(json);
-            stage.destroy();
-            layer.destroy();
-            stage = Konva.Node.create(json[currentpage], 'container');
-            stage.find('Image').forEach(imageNode => {
-                const nativeImage = new window.Image();
-                nativeImage.onload = () => {
-                    imageNode.image(nativeImage);
-                    imageNode.getLayer().batchDraw();
-                }
-                nativeImage.src = imageNode.getAttr('source');
-            })
-            
-
-            stgevents();*/
-            // by default select all shapes
-            
-
-
-            /*json[currentpage] = stage.toJSON();
-            layer.destroyChildren();
-            layer.draw();
-            console.log("json: "+json[currentpage]);*/
-            document.getElementById('felirat').innerHTML = currentpage + 1 + "-" + page.value;
+            document.getElementById('felirat').innerHTML = currentpage + 1 + "-" + allpage;
         }
 }
+
+function addpage() {
+    for (i = allpage - 1; i < allpage + 2; i++) {
+
+        stdata[i] = tempstage;
+    }
+    allpage += 2;
+    console.log(allpage);
+    document.getElementById('felirat').innerHTML = currentpage + 1 + "-" + allpage;
+ }
     
 function draw() {
 
@@ -562,7 +523,7 @@ function stgevents() {
         if (selectionRectangle.visible()) {
             return;
         }
-
+        console.log(e.target.name());
         // if click on empty area - remove all selections
         if (e.target === stage) {
             tr.nodes([]);
@@ -571,6 +532,7 @@ function stgevents() {
 
         // do nothing if clicked NOT on our rectangles
         if (!e.target.hasName('ez')) {
+            
             return;
         }
 
@@ -599,7 +561,7 @@ function stgevents() {
     stage.on('mousemove', function (e) {
         //var pos = group.getRelativePointerPosition()
         // console.log(stage.getPointerPosition());
-        console.log("stage width: " + stage.width() + " stage height: " + stage.height());
+        //console.log("stage width: " + stage.width() + " stage height: " + stage.height());
     });
 }
 
@@ -775,24 +737,23 @@ var slmode;
 
 function crtpdf() {
     stdata[currentpage] = stage.toDataURL({ pixelRatio: 2 });
-    var pdf = new jsPDF(slmode, 'pt', [twidth, theight]);
-    pdf.setTextColor('#000000');
+    var pdf = new jsPDF(slmode, 'pt', [twidth / (4 / 3), theight / (4 / 3)]);
 
-    for (i = 0; i < page.value; i++) {
+    for (i = 0; i < allpage; i++) {
         
     pdf.addImage(
         stdata[i],
         0,
         0,
-        stage.width(),
-        stage.height()
+        twidth/(4/3),
+        theight/(4/3)
         );
-        if (page.value-1 > i) {
+        if (allpage - 1 > i) {
             pdf.addPage();
         }
     }
 
-    pdf.save('canvas.pdf');
+    pdf.save('album.pdf');
 
 }
 
