@@ -13,7 +13,9 @@ div.sideload {
 #container {
     background-color: rgba(0, 0, 0, 0.1);
     border-style: none;
-  }
+    width: 1800px;
+    height: 1800px;
+}
 
  
 

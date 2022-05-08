@@ -3,6 +3,10 @@ var height = 1800;
 var available = 0;
 var allpage;
 var tempstage;
+var twidth;
+var theight;
+var mmtopx = 3.7795275591;
+var displayed = true;
 
 
 let str = [];
@@ -384,20 +388,23 @@ let json = [];
 let stdata = [];
 function createalbum() {
     allpage = parseInt(page.value);
-    document.getElementById("container").style.borderStyle="solid";
     if (size.value == 1) {
-        twidth = 794;
-        theight = 1123;
+        twidth = 793.70;
+        theight = 1122.52;
         slmode = 'p';
     } else if (size.value == 2) {
         twidth = 1123;
         theight = 794;
         slmode = 'l';
     } else {
-        twidth = 1134;
-        theight = 1134;
+        twidth = Math.round((300*mmtopx) * 10) / 10;
+        theight = Math.round((300 * mmtopx) * 10) / 10;
+        console.log(twidth);
         slmode = 'p';
     }
+    document.getElementById("container").style.width = twidth+"px";
+    document.getElementById("container").style.height = theight+"px";
+    document.getElementById("container").style.borderStyle = "solid";
     con = stage.container();
     stage.width(twidth);
     stage.height(theight);
@@ -840,3 +847,13 @@ function paintstamp() {
                 background.fillPatternOffsetY(yoff.value);
                 //console.log(background);
             };
+
+                function hide() {
+                    if (displayed == true) {
+                        document.getElementById("side").style.display = "none";
+                        displayed = false;
+                    } else {
+                        document.getElementById("side").style.display = "flex";
+                        displayed = true;
+                    }
+                }
