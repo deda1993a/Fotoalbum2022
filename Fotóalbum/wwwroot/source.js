@@ -7,6 +7,10 @@ var twidth;
 var theight;
 var mmtopx = 3.7795275591;
 var displayed = true;
+var image2;
+var tr2;
+var textNode;
+var seltext;
 
 
 let str = [];
@@ -111,22 +115,18 @@ stage.on('click', function (e) {
 
 var itemURL = '';
 document
-    .getElementById('sideload')
-    .addEventListener('dragstart', function (e) {
-        itemURL = e.target.src;
-    });
+.getElementById('sideload')
+.addEventListener('dragstart', function (e) {
+itemURL = e.target.src;
+});
 
 var Grscale = function (imageData) {
-    // make all pixels opaque 100%
     var nPixels = imageData.data.length;
     if (grscale == true)
         for (var i = 0; i < nPixels; i += 4) {
             brightness = 0.34 * imageData.data[i] + 0.5 * imageData.data[i + 1] + 0.16 * imageData.data[i + 2];
-            // red
             imageData.data[i] = brightness;
-            // green
             imageData.data[i + 1] = brightness;
-            // blue
             imageData.data[i + 2] = brightness;
         }
 };
@@ -162,9 +162,9 @@ con.addEventListener('drop', function (e) {
             image.setAttr('source', itemURL);
             image.draggable(true);
             console.log(image);
-            console.log(layer);          
+            console.log(layer);
             image.cache();
-            image.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale]);
+            image.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale, CrtFrame]);
 
             var blur = document.getElementById('blur');
             blur.oninput = function () {
@@ -193,7 +193,7 @@ con.addEventListener('drop', function (e) {
                     grscale = true;
                 }
                 
-                imagesel.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale]);
+                imagesel.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale, CrtFrame]);
                 layer.draw();
                 imagesel.setAttr('grscale', grscale);
                // grscale = false;
@@ -208,9 +208,21 @@ con.addEventListener('drop', function (e) {
         Konva.Image.fromURL(itemURL, function (image) {
            
             image.name('back');
-            imgtmp.src = image.src();
-            image.position(stage.getPointerPosition());
-           
+            image.src = itemURL;
+            //image.position(stage.getPointerPosition());
+
+            image2 = new Image();
+            image2.onload = function () {
+                var img2 = new Konva.Image({
+                    x: 50,
+                    y: 150,
+                    image: image2,
+                    width: 106,
+                    height: 118,
+                    draggable: true,
+                })
+                image2.src = itemURL;
+            }
         });
         for(i=0;i<allpage;i++){
          background = new Konva.Rect({
@@ -219,7 +231,7 @@ con.addEventListener('drop', function (e) {
             y: 0,
             width: stage.width(),
             height: stage.height(),
-            fillPatternImage: image1,
+            fillPatternImage: image2,
             fillPatternOffset: { x: -220, y: 70 },
             // remove background from hit graph for better perf
             // because we don't need any events on the background
@@ -248,7 +260,8 @@ var imagesel;
 stage.on('click', function (evt) {
     // get the shape that was clicked on
     imagesel = evt.target;
-    
+    seltext = evt.target;
+    console.log("seltext:"+seltext);
 });
 
 
@@ -472,7 +485,6 @@ function stgevents() {
 
     var x1, y1, x2, y2;
     stage.on('mousedown touchstart', (e) => {
-        // do nothing if we mousedown on any shape
         if (e.target !== stage) {
             return;
         }
@@ -481,7 +493,6 @@ function stgevents() {
         y1 = stage.getPointerPosition().y;
         x2 = stage.getPointerPosition().x;
         y2 = stage.getPointerPosition().y;
-
         selectionRectangle.visible(true);
         selectionRectangle.width(0);
         selectionRectangle.height(0);
@@ -530,18 +541,21 @@ function stgevents() {
         if (selectionRectangle.visible()) {
             return;
         }
-        console.log(e.target.name());
+        //console.log(e.target.name());
         // if click on empty area - remove all selections
         if (e.target === stage) {
             tr.nodes([]);
+            //tr2.nodes([]);
             return;
         }
 
+
         // do nothing if clicked NOT on our rectangles
-        if (!e.target.hasName('ez')) {
+        if (!e.target.hasName('ez2')) {
             
             return;
         }
+
 
         // do we pressed shift or ctrl?
         const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
@@ -550,6 +564,7 @@ function stgevents() {
         if (!metaPressed && !isSelected) {
             // if no key pressed and the node is not selected
             // select just one
+            tr.nodes([e.target]);
             tr.nodes([e.target]);
         } else if (metaPressed && isSelected) {
             // if we pressed keys and node was selected
@@ -566,6 +581,7 @@ function stgevents() {
     });
 
     stage.on('mousemove', function (e) {
+        
         //var pos = group.getRelativePointerPosition()
         // console.log(stage.getPointerPosition());
         //console.log("stage width: " + stage.width() + " stage height: " + stage.height());
@@ -573,8 +589,9 @@ function stgevents() {
 }
 
 function addtext() {
-    var textNode = new Konva.Text({
+     textNode = new Konva.Text({
         text: tx.value,
+        name: 'ez2',
         x: 50,
         y: 80,
         fontFamily: fonttype.value,
@@ -586,7 +603,7 @@ function addtext() {
 
     layer.add(textNode);
 
-    var tr = new Konva.Transformer({
+     tr2 = new Konva.Transformer({
         node: textNode,
         enabledAnchors: ['middle-left', 'middle-right'],
         // set minimum width of text
@@ -604,13 +621,27 @@ function addtext() {
         });
     });
 
-    layer.add(tr);
+    layer.add(tr2);
+
+    stage.on('click', function (e) {
+        if (e.target !== null) {
+            tr2.hide();
+            //tr2.nodes([]);
+            console.log(e.target);
+            //return;
+        } 
+           // tr2.nodes([e.target]);
+           // console.log(e.target);
+        
+        
+       
+    });
 
     textNode.on('dblclick dbltap', () => {
         // hide text node and transformer:
-        textNode.hide();
-        tr.hide();
-
+        this.textNode.hide();
+        tr2.hide();
+        fontsize.value = textNode.fontSize();
         // create textarea over canvas with absolute position
         // first we need to find position for textarea
         // how to find it?
@@ -680,8 +711,8 @@ function addtext() {
             textarea.parentNode.removeChild(textarea);
             window.removeEventListener('click', handleOutsideClick);
             textNode.show();
-            tr.show();
-            tr.forceUpdate();
+            tr2.show();
+            tr2.forceUpdate();
         }
 
         function setTextareaWidth(newWidth) {
@@ -856,4 +887,41 @@ function paintstamp() {
                         document.getElementById("side").style.display = "flex";
                         displayed = true;
                     }
-                }
+}
+
+                function framing() {
+                    document.getElementById("frame").hidden = false;
+}
+
+                    var framesize = document.getElementById('framesize');
+framesize.oninput = function () {
+  
+    imagesel.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale, CrtFrame]);
+
+    layer.draw();
+    console.log(imagesel.width());
+
+
+                      
+};
+
+var CrtFrame = function (imageData) {
+    var nPixels = imageData.data.length;
+    var bytesPerPixel = imageData.data.length / 8;
+    //bytesPerPixel = System.Drawing.Bitmap.GetPixelFormatSize(temp.PixelFormat) / 8;
+    var height = imageData.height;
+    var width = imageData.width * 3;
+    console.log("img: " + nPixels + ":" + imageData.width);
+        for (var i = 0; i < height; i ++) {
+            for (j = 0; j < width; j += bytesPerPixel) {
+                imageData.data[i] = 255;
+                imageData.data[i + 1] = 0;
+                imageData.data[i + 2] = 0;
+                
+            }
+        }
+};
+
+function modtext() {
+    this.textNode.fontSize(fontsize.value);
+}
