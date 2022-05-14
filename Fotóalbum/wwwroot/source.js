@@ -11,6 +11,7 @@ var image2;
 var tr2;
 var textNode;
 var seltext;
+var txSize;
 
 
 let str = [];
@@ -261,7 +262,7 @@ stage.on('click', function (evt) {
     // get the shape that was clicked on
     imagesel = evt.target;
     seltext = evt.target;
-    console.log("seltext:"+seltext);
+    
 });
 
 
@@ -541,7 +542,7 @@ function stgevents() {
         if (selectionRectangle.visible()) {
             return;
         }
-        //console.log(e.target.name());
+        console.log(e.target.name());
         // if click on empty area - remove all selections
         if (e.target === stage) {
             tr.nodes([]);
@@ -551,7 +552,7 @@ function stgevents() {
 
 
         // do nothing if clicked NOT on our rectangles
-        if (!e.target.hasName('ez2')) {
+        if (!e.target.hasName('ez')) {
             
             return;
         }
@@ -589,6 +590,7 @@ function stgevents() {
 }
 
 function addtext() {
+    
      textNode = new Konva.Text({
         text: tx.value,
         name: 'ez2',
@@ -612,7 +614,9 @@ function addtext() {
             return newBox;
         },
     });
-
+   
+        //tr2.nodes([]);
+    
     textNode.on('transform', function () {
         // reset scale, so only with is changing by transformer
         textNode.setAttrs({
@@ -621,20 +625,33 @@ function addtext() {
         });
     });
 
+
+
     layer.add(tr2);
 
     stage.on('click', function (e) {
-        if (e.target !== null) {
-            tr2.hide();
-            //tr2.nodes([]);
+        if (seltext.hasName('ez2')===true) {
+            //tr2.hide();
+            tr2.nodes([seltext]);
             console.log(e.target);
+            console.log("textNode.fontSize: " + textNode.fontSize);
+            fontsize.value = seltext.fontSize();
+            textNode = seltext;
             //return;
-        } 
+        } else {
+            tr2.nodes([]);
+        }
            // tr2.nodes([e.target]);
            // console.log(e.target);
         
         
        
+    });
+
+    textNode.on('click', () => {
+        //if (seltext.hasName('ez2') == true) { 
+        
+    //}
     });
 
     textNode.on('dblclick dbltap', () => {
@@ -923,5 +940,5 @@ var CrtFrame = function (imageData) {
 };
 
 function modtext() {
-    this.textNode.fontSize(fontsize.value);
+    imagesel.fontSize(fontsize.value);
 }
