@@ -22,7 +22,7 @@ var imagesel;
 
 let str = [];
 var backgroundC=false;
-var background;
+
 var mode = 0;
 
 const { XHRUpload } = Uppy;
@@ -168,6 +168,7 @@ con.addEventListener('drop', function (e) {
             image.src = itemURL;
             image.setAttr('source', itemURL);
             image.draggable(true);
+            image.cropX(250);
             console.log(image);
             console.log(layer);
             image.cache();
@@ -289,7 +290,7 @@ con.addEventListener('drop', function (e) {
 });
 
 
-var rect1 = new Konva.Rect({
+/*var rect1 = new Konva.Rect({
     x: 60,
     y: 60,
     width: 100,
@@ -298,7 +299,7 @@ var rect1 = new Konva.Rect({
     name: 'rect',
     draggable: true,
 });
-layer.add(rect1);
+layer.add(rect1);*/
 
  stgevents();
 
@@ -323,14 +324,20 @@ function klikk(){
 function select() {
     sideload.hidden = false;
     document.getElementById("drag-drop-area").hidden = true;
-    backgroundC = false;
     paintitems.hidden = true;
+    document.getElementById("filters").hidden = true;
+    document.getElementById("stamps").hidden = true;
+    frame.hidden = true;
+    backgroundC = false;
 }
 
 function upload() {
     sideload.hidden = true;
     document.getElementById("drag-drop-area").hidden = false;
     paintitems.hidden = true;
+    document.getElementById("filters").hidden =idden = true;
+    document.getElementById("stamps").hidden = true;
+    frame.hidden = true;
 }
 
 function deleteI (){
@@ -339,20 +346,31 @@ function deleteI (){
 }
 
 function backG() {
+    sideload.hidden = false;
+    document.getElementById("drag-drop-area").hidden = true;
+    paintitems.hidden = true;
+    document.getElementById("filters").hidden = true;
+    document.getElementById("stamps").hidden = true;
+    frame.hidden = true;
     backgroundC = true;
 }
 
 function painttool() {
     sideload.hidden = true;
-    paintitems.hidden = false;
     document.getElementById("drag-drop-area").hidden = true;
+    paintitems.hidden = false;
+    document.getElementById("filters").hidden = true;
+    document.getElementById("stamps").hidden = true;
+    frame.hidden = true;
 }
 
 function filters() {
     sideload.hidden = true;
-    paintitems.hidden = true;
     document.getElementById("drag-drop-area").hidden = true;
+    paintitems.hidden = true;
     document.getElementById("filters").hidden = false;
+    document.getElementById("stamps").hidden = true;
+    frame.hidden = true;
 
 }
 
@@ -364,14 +382,14 @@ function painter() {
     canvas.height = stage.height();
 
     // created canvas we can add to layer as "Konva.Image" element
-    var image = new Konva.Image({
+    var imagedraw = new Konva.Image({
         image: canvas,
         x: 0,
         y: 0,
     });
-    drw = image;
-    drawimg = image;
-    layer.add(image);
+    drw = imagedraw;
+    drawimg = imagedraw;
+    layer.add(imagedraw);
 
     // Good. Now we need to get access to context element
     var context = canvas.getContext('2d');
@@ -387,7 +405,7 @@ function painter() {
     // now we need to bind some events
     // we need to start drawing on mousedown
     // and stop drawing on mouseup
-    image.on('mousedown touchstart', function () {
+    imagedraw.on('mousedown touchstart', function () {
         isPaint = true;
         lastPointerPosition = stage.getPointerPosition();
     });
@@ -413,14 +431,14 @@ function painter() {
         context.beginPath();
 
         var localPos = {
-            x: lastPointerPosition.x - image.x(),
-            y: lastPointerPosition.y - image.y(),
+            x: lastPointerPosition.x - imagedraw.x(),
+            y: lastPointerPosition.y - imagedraw.y(),
         };
         context.moveTo(localPos.x, localPos.y);
         var pos = stage.getPointerPosition();
         localPos = {
-            x: pos.x - image.x(),
-            y: pos.y - image.y(),
+            x: pos.x - imagedraw.x(),
+            y: pos.y - imagedraw.y(),
         };
         context.lineTo(localPos.x, localPos.y);
         context.closePath();
@@ -884,9 +902,10 @@ function crtpdf() {
 function stamps() {
     sideload.hidden = true;
     document.getElementById("drag-drop-area").hidden = true;
-    backgroundC = false;
     paintitems.hidden = true;
+    document.getElementById("filters").hidden = true;
     document.getElementById("stamps").hidden = false;
+    frame.hidden = true;
 }
 
 var selStamp;
@@ -946,7 +965,7 @@ function paintstamp() {
                 //imagesel.bscale(parseFloat(bscale.value));
                 //imagesel.setAttr('bscale', parseFloat(bscale.value));
               
-                background.fillPatternScale({ x: bscale.value, y: bscale.value });
+                background.scale({ x: bscale.value, y: bscale.value });
                
                 //console.log(background);
             };
@@ -956,9 +975,11 @@ function paintstamp() {
                 //imagesel.bscale(parseFloat(bscale.value));
                 //imagesel.setAttr('bscale', parseFloat(bscale.value));
                 
-                background.image.position({
-                    x: stage.getPointerPosition().x - (twidth * currentpage)+xoff.value,
-                    y: stage.getPointerPosition().y
+                background.crop({
+                    x: 20,
+                    y: 20,
+                    width: 20,
+                    height: 20
                 });
                 console.log(background);
                 
@@ -986,12 +1007,17 @@ function paintstamp() {
 }
 
                 function framing() {
-                    document.getElementById("frame").hidden = false;
+                    sideload.hidden = true;
+                    document.getElementById("drag-drop-area").hidden = true;
+                    paintitems.hidden = true;
+                    document.getElementById("filters").hidden = true;
+                    document.getElementById("stamps").hidden = true;
+                    frame.hidden = false;
 }
 
                     var framesize = document.getElementById('framesize');
 framesize.oninput = function () {
-  
+    console.log(imagesel.strokeEnabled());
     imagesel.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale, CrtFrame]);
 
     layer.draw();
@@ -1041,10 +1067,23 @@ function topdrawing() {
 }
 
 function dltbackground() {
-    background.remove();
+    if (imagesel.hasName('back') == true) {
+        imagesel.remove();
+    }
 }
 
 function deselectF() {
     tr.nodes([]);
     tr2.nodes([]);
+}
+
+function slctUp() {
+    imagesel.moveToTop();
+}
+
+function cropper() {
+    console.log(imagesel.width());
+    
+    imagesel.cropX(25);
+    console.log(imagesel.width());
 }
