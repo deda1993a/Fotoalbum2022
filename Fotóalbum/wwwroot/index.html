@@ -87,8 +87,10 @@
                 <br>
 
                 <button type="button" onclick="painter()">Ecset kiválasztás</button>
-                <button type="button" onclick="depainter()">Kiválasztó eszköz</button><br><br>
-                <button type="button" onclick="addtext()">Szöveg hozzáadása</button>
+                <button type="button" onclick="depainter()">Kiválasztó eszköz</button>
+                <button type="button" onclick="topdrawing()">Rajz réteg legfelül</button><br><br>
+                <button type="button" id="addtext" onclick="addtext()">Szöveg hozzáadása</button>
+                <button type="button" onclick="deletext()">Szöveg törlése</button>
                 <button type="button" onclick="modtext()">Szöveg módosítása</button>
                 <select id="fonttype">
                     <option value="Arial">Arial</option>
@@ -98,6 +100,12 @@
                     <option value="Courier New">Courier New</option>
                     <option value="Brush Script MT">Brush Script MT</option>
                     <option value="Verdana ">Verdana</option>
+                </select>
+                <select id="fontstyle">
+                    <option value="normal">Normál</option>
+                    <option value="bold">Félkövér</option>
+                    <option value="italic">Dőlt</option>
+                    <option value="italic bold">Dőlt félkövér</option>
                 </select>
                 <select id="fontsize">
                     <option value="10">10</option>
@@ -138,7 +146,8 @@
                     <label for="xoff">Háttér eltolása vízszintesen</label>
                     <input type="range" min="0" max="300" value="0" id="xoff">
                     <label for="yoff">Háttér eltolása függőlegesen</label>
-                    <input type="range" min="0" max="300" value="0" id="yoff">
+                    <input type="range" min="0" max="300" value="0" id="yoff"><br><br>
+                    <button type="button" id="deselect" onclick="deselectF()">Kijelölés megszüntetése</button>
 
                 </div>
             </div>

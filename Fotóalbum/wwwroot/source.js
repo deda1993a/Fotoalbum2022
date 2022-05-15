@@ -8,10 +8,16 @@ var theight;
 var mmtopx = 3.7795275591;
 var displayed = true;
 var image2;
+var tr;
 var tr2;
 var textNode;
 var seltext;
 var txSize;
+var moreimage = false;
+var drawimg;
+var background;
+
+var imagesel;
 
 
 let str = [];
@@ -166,6 +172,10 @@ con.addEventListener('drop', function (e) {
             console.log(layer);
             image.cache();
             image.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale, CrtFrame]);
+            if (moreimage == false) {
+                imagesel = image;
+                moreimage = true;
+            }
 
             var blur = document.getElementById('blur');
             blur.oninput = function () {
@@ -211,21 +221,56 @@ con.addEventListener('drop', function (e) {
             image.name('back');
             image.src = itemURL;
             //image.position(stage.getPointerPosition());
+            image.position({
+                x: layer.offsetX(),
+                y: 0
+            });
+            image.width(stage.width());
+            image.height(stage.height());
+            image.fillPatternOffsetX(0);
+            image.cache();
+            background = image;
+            image.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale, CrtFrame]);
+            
+            var blur = document.getElementById('blur');
+            blur.oninput = function () {
+                imagesel.blurRadius(blur.value);
+                imagesel.setAttr('blur', blur.value);
+            };
 
-            image2 = new Image();
-            image2.onload = function () {
-                var img2 = new Konva.Image({
-                    x: 50,
-                    y: 150,
-                    image: image2,
-                    width: 106,
-                    height: 118,
-                    draggable: true,
-                })
-                image2.src = itemURL;
-            }
+            var brighten = document.getElementById('brighten');
+            brighten.oninput = function () {
+                imagesel.brightness(brighten.value);
+                imagesel.setAttr('brighten', brighten.value);
+            };
+
+            var enhance = document.getElementById('enhance');
+            enhance.oninput = function () {
+                imagesel.enhance(parseFloat(enhance.value));
+                imagesel.setAttr('enhance', parseFloat(enhance.value));
+            };
+
+
+
+            grayscale.onclick = function () {
+                if (grscale == true) {
+                    grscale = false;
+                } else {
+                    grscale = true;
+                }
+
+                imagesel.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale, CrtFrame]);
+                layer.draw();
+                imagesel.setAttr('grscale', grscale);
+                // grscale = false;
+            };
+            console.log("megy");
+            layer.add(image);
+            stage.add(layer);
+            image.moveToBottom();
+            image.moveUp();
         });
-        for(i=0;i<allpage;i++){
+        /*for(i=0;i<allpage;i++){
          background = new Konva.Rect({
             
             x: layer.offsetX(),
@@ -238,8 +283,8 @@ con.addEventListener('drop', function (e) {
             // because we don't need any events on the background
             listening: false,
         });
-        }
-        layer.add(background);
+        }*/
+       
     }
 });
 
@@ -257,12 +302,12 @@ layer.add(rect1);
 
  stgevents();
 
-var imagesel;
+
 stage.on('click', function (evt) {
     // get the shape that was clicked on
     imagesel = evt.target;
     seltext = evt.target;
-    
+    //drawimg = evt.target;
 });
 
 
@@ -325,6 +370,7 @@ function painter() {
         y: 0,
     });
     drw = image;
+    drawimg = image;
     layer.add(image);
 
     // Good. Now we need to get access to context element
@@ -395,6 +441,13 @@ function depainter() {
     drw.moveToBottom();
     stage.off();
     stgevents();
+
+    stage.on('click', function (evt) {
+        // get the shape that was clicked on
+        imagesel = evt.target;
+        seltext = evt.target;
+       // drawimg = evt.target;
+    });
     
 }
 
@@ -470,7 +523,7 @@ function draw() {
 }
 
 function stgevents() {
-    var tr = new Konva.Transformer();
+    tr = new Konva.Transformer();
     layer.add(tr);
 
     // by default select all shapes
@@ -527,7 +580,7 @@ function stgevents() {
             selectionRectangle.visible(false);
         });
 
-        var shapes = stage.find('.rect');
+        var shapes = stage.find('Image');
         var box = selectionRectangle.getClientRect();
         var selected = shapes.filter((shape) =>
             Konva.Util.haveIntersection(box, shape.getClientRect())
@@ -542,9 +595,11 @@ function stgevents() {
         if (selectionRectangle.visible()) {
             return;
         }
+
+
         console.log(e.target.name());
         // if click on empty area - remove all selections
-        if (e.target === stage) {
+        if (e.target === stage || imagesel.hasName('back')===true) {
             tr.nodes([]);
             //tr2.nodes([]);
             return;
@@ -587,6 +642,8 @@ function stgevents() {
         // console.log(stage.getPointerPosition());
         //console.log("stage width: " + stage.width() + " stage height: " + stage.height());
     });
+
+
 }
 
 function addtext() {
@@ -594,9 +651,10 @@ function addtext() {
      textNode = new Konva.Text({
         text: tx.value,
         name: 'ez2',
-        x: 50,
+         x: 50 - (twidth * currentpage),
         y: 80,
-        fontFamily: fonttype.value,
+         fontFamily: fonttype.value,
+         fontStyle: fontstyle.value,
         fontSize: fontsize.value,
         draggable: true,
         fill: fontcolour.value,
@@ -632,10 +690,15 @@ function addtext() {
     stage.on('click', function (e) {
         if (seltext.hasName('ez2')===true) {
             //tr2.hide();
+
             tr2.nodes([seltext]);
             console.log(e.target);
             console.log("textNode.fontSize: " + textNode.fontSize);
             fontsize.value = seltext.fontSize();
+            fttype.value =seltext.fontFamily();
+            ftcolor.value=seltext.fill();
+            tx.value = seltext.text();
+            ftstyle.value=seltext.fontStyle();
             textNode = seltext;
             //return;
         } else {
@@ -647,6 +710,12 @@ function addtext() {
         
        
     });
+
+    document
+        .getElementById('addtext')
+        .addEventListener('mouseenter', function (e) {
+            tr2.nodes([]);
+        });
 
     textNode.on('click', () => {
         //if (seltext.hasName('ez2') == true) { 
@@ -876,7 +945,9 @@ function paintstamp() {
             bscale.oninput = function () {
                 //imagesel.bscale(parseFloat(bscale.value));
                 //imagesel.setAttr('bscale', parseFloat(bscale.value));
-                background.fillPatternScale({x: bscale.value, y: bscale.value});
+              
+                background.fillPatternScale({ x: bscale.value, y: bscale.value });
+               
                 //console.log(background);
             };
 
@@ -884,7 +955,13 @@ function paintstamp() {
             xoff.oninput = function () {
                 //imagesel.bscale(parseFloat(bscale.value));
                 //imagesel.setAttr('bscale', parseFloat(bscale.value));
-                background.fillPatternOffsetX(xoff.value);
+                
+                background.image.position({
+                    x: stage.getPointerPosition().x - (twidth * currentpage)+xoff.value,
+                    y: stage.getPointerPosition().y
+                });
+                console.log(background);
+                
                 //console.log(background);
             };
 
@@ -892,7 +969,9 @@ function paintstamp() {
             yoff.oninput = function () {
                 //imagesel.bscale(parseFloat(bscale.value));
                 //imagesel.setAttr('bscale', parseFloat(bscale.value));
+            
                 background.fillPatternOffsetY(yoff.value);
+                
                 //console.log(background);
             };
 
@@ -939,6 +1018,33 @@ var CrtFrame = function (imageData) {
         }
 };
 
+var ftcolor = document.getElementById("fontcolour");
+var fttype = document.getElementById("fonttype");
+var ftstyle = document.getElementById("fontstyle");
+
+
 function modtext() {
-    imagesel.fontSize(fontsize.value);
+    textNode.fontFamily(fttype.value);
+    textNode.fontSize(fontsize.value);
+    textNode.fill(ftcolor.value);
+    textNode.text(tx.value);
+    textNode.fontStyle(ftstyle.value);
+}
+
+function deletext() {
+    textNode.remove();
+    
+}
+
+function topdrawing() {
+    drawimg.moveToTop();
+}
+
+function dltbackground() {
+    background.remove();
+}
+
+function deselectF() {
+    tr.nodes([]);
+    tr2.nodes([]);
 }
