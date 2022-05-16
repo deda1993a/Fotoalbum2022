@@ -1,5 +1,5 @@
-var width = 1800;
-var height = 1800;
+var width = 18;
+var height = 18;
 var available = 0;
 var allpage;
 var tempstage;
@@ -16,6 +16,7 @@ var txSize;
 var moreimage = false;
 var drawimg;
 var background;
+var created = false;
 
 var imagesel;
 
@@ -75,7 +76,7 @@ var layer = new Konva.Layer();
 //layer.offsetX = 1400;
 stage.add(layer);
 
-var image1 = new Image();
+/*var image1 = new Image();
 image1.onload = function () {
   var img1 = new Konva.Image({
     x: 1110,
@@ -90,7 +91,7 @@ image1.onload = function () {
   image1.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale]),
   layer.add(img1);
 };
-image1.src = 'background1.jpg';
+image1.src = 'background1.jpg';*/
 
 
 /*
@@ -127,6 +128,12 @@ document
 itemURL = e.target.src;
 });
 
+document
+    .getElementById('frame')
+    .addEventListener('dragstart', function (e) {
+        itemURL = e.target.src;
+    });
+
 var Grscale = function (imageData) {
     var nPixels = imageData.data.length;
     if (grscale == true)
@@ -140,17 +147,14 @@ var Grscale = function (imageData) {
 
 var con = stage.container();
 con.addEventListener('dragover', function (e) {
-    e.preventDefault(); // !important
+    e.preventDefault(); 
     //console.log(con);
 });
 
 var grscale = false;
 con.addEventListener('drop', function (e) {
     e.preventDefault();
-    // now we need to find pointer position
-    // we can't use stage.getPointerPosition() here, because that event
-    // is not registered by Konva.Stage
-    // we can register it manually:
+
 
 
 
@@ -166,23 +170,22 @@ con.addEventListener('drop', function (e) {
                 y: stage.getPointerPosition().y
             });
             image.src = itemURL;
+            if (image.width() > 1100) {
+                image.scaleX(0.2);
+                image.scaleY(0.2);
+            }
             image.setAttr('source', itemURL);
             image.draggable(true);
-            image.cropX(250);
             console.log(image);
             console.log(layer);
             image.cache();
-            image.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale, CrtFrame]);
+            image.filters([Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale]);
             if (moreimage == false) {
                 imagesel = image;
                 moreimage = true;
             }
 
-            var blur = document.getElementById('blur');
-            blur.oninput = function () {
-                imagesel.blurRadius(blur.value);
-                imagesel.setAttr('blur', blur.value);
-            };
+
 
             var brighten = document.getElementById('brighten');
             brighten.oninput = function () {
@@ -205,7 +208,7 @@ con.addEventListener('drop', function (e) {
                     grscale = true;
                 }
                 
-                imagesel.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale, CrtFrame]);
+                imagesel.filters([Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale]);
                 layer.draw();
                 imagesel.setAttr('grscale', grscale);
                // grscale = false;
@@ -231,13 +234,9 @@ con.addEventListener('drop', function (e) {
             image.fillPatternOffsetX(0);
             image.cache();
             background = image;
-            image.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale, CrtFrame]);
+            image.filters([Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale]);
             
-            var blur = document.getElementById('blur');
-            blur.oninput = function () {
-                imagesel.blurRadius(blur.value);
-                imagesel.setAttr('blur', blur.value);
-            };
+
 
             var brighten = document.getElementById('brighten');
             brighten.oninput = function () {
@@ -260,7 +259,7 @@ con.addEventListener('drop', function (e) {
                     grscale = true;
                 }
 
-                imagesel.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale, CrtFrame]);
+                imagesel.filters([Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale]);
                 layer.draw();
                 imagesel.setAttr('grscale', grscale);
                 // grscale = false;
@@ -290,25 +289,25 @@ con.addEventListener('drop', function (e) {
 });
 
 
-/*var rect1 = new Konva.Rect({
+var rect1 = new Konva.Rect({
     x: 60,
-    y: 60,
+    y: -100,
     width: 100,
     height: 90,
     fill: 'red',
     name: 'rect',
     draggable: true,
 });
-layer.add(rect1);*/
+layer.add(rect1);
 
  stgevents();
 
 
 stage.on('click', function (evt) {
-    // get the shape that was clicked on
+   
     imagesel = evt.target;
     seltext = evt.target;
-    //drawimg = evt.target;
+
 });
 
 
@@ -375,48 +374,60 @@ function filters() {
 }
 
 var drw;
+var imagedraw = [];
 function painter() {
-    // then we are going to draw into special canvas element
+
+
     var canvas = document.createElement('canvas');
     canvas.width = stage.width();
     canvas.height = stage.height();
 
-    // created canvas we can add to layer as "Konva.Image" element
-    var imagedraw = new Konva.Image({
+  
+     imagedraw[currentpage] = new Konva.Image({
         image: canvas,
-        x: 0,
+        name: currentpage,
+        x: 0 - (twidth * currentpage),
         y: 0,
     });
-    drw = imagedraw;
-    drawimg = imagedraw;
-    layer.add(imagedraw);
+    console.log("x: " + imagedraw[currentpage]);
+    drw = imagedraw[currentpage];
+    drawimg = imagedraw[currentpage];
+    layer.add(imagedraw[currentpage]);
 
-    // Good. Now we need to get access to context element
+
     var context = canvas.getContext('2d');
     context.strokeStyle = colourselect.value;
-    //context.strokeStyle = '#df4b26';
+   
     context.lineJoin = 'round';
     context.lineWidth = strokewidth.value;
+
+    document.getElementById('colourselect')
+        .addEventListener('change', function (e) {
+            context.strokeStyle = colourselect.value;
+        });
+
+    document.getElementById('strokewidth')
+        .addEventListener('change', function (e) {
+            context.lineWidth = strokewidth.value;
+        });
 
     var isPaint = false;
     var lastPointerPosition;
     var mode = 'brush';
 
-    // now we need to bind some events
-    // we need to start drawing on mousedown
-    // and stop drawing on mouseup
-    imagedraw.on('mousedown touchstart', function () {
+
+    imagedraw[currentpage].on('mousedown touchstart', function () {
         isPaint = true;
         lastPointerPosition = stage.getPointerPosition();
     });
 
-    // will it be better to listen move/end events on the window?
+
 
     stage.on('mouseup touchend', function () {
         isPaint = false;
     });
 
-    // and core function - drawing
+
     stage.on('mousemove touchmove', function () {
         if (!isPaint) {
             return;
@@ -431,21 +442,21 @@ function painter() {
         context.beginPath();
 
         var localPos = {
-            x: lastPointerPosition.x - imagedraw.x(),
-            y: lastPointerPosition.y - imagedraw.y(),
+            x: (lastPointerPosition.x- (twidth * currentpage)) - imagedraw[currentpage].x(),
+            y: lastPointerPosition.y - imagedraw[currentpage].y(),
         };
         context.moveTo(localPos.x, localPos.y);
         var pos = stage.getPointerPosition();
         localPos = {
-            x: pos.x - imagedraw.x(),
-            y: pos.y - imagedraw.y(),
+            x: (pos.x- (twidth * currentpage)) - imagedraw[currentpage].x(),
+            y: pos.y - imagedraw[currentpage].y(),
         };
         context.lineTo(localPos.x, localPos.y);
         context.closePath();
         context.stroke();
 
         lastPointerPosition = pos;
-        // redraw manually
+     
         layer.batchDraw();
     });
 
@@ -461,10 +472,10 @@ function depainter() {
     stgevents();
 
     stage.on('click', function (evt) {
-        // get the shape that was clicked on
+     
         imagesel = evt.target;
         seltext = evt.target;
-       // drawimg = evt.target;
+
     });
     
 }
@@ -478,15 +489,46 @@ function createalbum() {
         theight = 1122.52;
         slmode = 'p';
     } else if (size.value == 2) {
-        twidth = 1123;
-        theight = 794;
+        twidth = 1122.52;
+        theight = 793.70;
         slmode = 'l';
-    } else {
-        twidth = Math.round((300*mmtopx) * 10) / 10;
-        theight = Math.round((300 * mmtopx) * 10) / 10;
+    } else if (size.value == 3) {
+        twidth = 1133.86;
+        theight = 1133.86;
         console.log(twidth);
         slmode = 'p';
+    } else if (size.value == 4) {
+        twidth = 755.91;
+        theight = 1133.86;
+        console.log(twidth);
+        slmode = 'p';
+    } else if (size.value == 5) {
+        twidth = 755.91;
+        theight = 755.91;
+        console.log(twidth);
+        slmode = 'p';
+    } else if (size.value == 6) {
+        twidth = 1133.86;
+        theight = 755.91;
+        console.log(twidth);
+        slmode = 'l';
+    } else if(size.value == 7) {
+        twidth = 1511.81;
+        theight = 1133.86;
+        console.log(twidth);
+        slmode = 'l';
+    } else if (size.value == 8) {
+        twidth = 559.37;
+        theight = 793.70;
+        console.log(twidth);
+        slmode = 'p';
+    } else if (size.value == 9) {
+        twidth = 793.70;
+        theight = 559.37;
+        console.log(twidth);
+        slmode = 'l';
     }
+
     document.getElementById("container").style.width = twidth+"px";
     document.getElementById("container").style.height = theight+"px";
     document.getElementById("container").style.borderStyle = "solid";
@@ -508,6 +550,9 @@ function createalbum() {
 function next() {
 
     if (currentpage < allpage - 1) {
+        if (imagedraw[currentpage] != null) {
+            imagedraw[currentpage].moveToTop();
+        }
         stdata[currentpage] = stage.toDataURL({ pixelRatio: 2 });
         layer.offsetX(layer.offsetX() - twidth);
         currentpage++;
@@ -517,7 +562,9 @@ function next() {
 
     function previous()
     {
-
+        if (imagedraw[currentpage] != null) {
+            imagedraw[currentpage].moveToTop();
+        }
         if (currentpage > 0) {
             stdata[currentpage] = stage.toDataURL({ pixelRatio: 2 });
             layer.offsetX(layer.offsetX() + twidth);
@@ -544,11 +591,11 @@ function stgevents() {
     tr = new Konva.Transformer();
     layer.add(tr);
 
-    // by default select all shapes
+
     tr.nodes([]);
 
 
-    // add a new feature, lets add ability to draw selection rectangle
+
     var selectionRectangle = new Konva.Rect({
         fill: 'rgba(0,0,255,0.5)',
         visible: false,
@@ -571,7 +618,7 @@ function stgevents() {
     });
 
     stage.on('mousemove touchmove', (e) => {
-        // do nothing if we didn't start selection
+
         if (!selectionRectangle.visible()) {
             return;
         }
@@ -588,12 +635,12 @@ function stgevents() {
     });
 
     stage.on('mouseup touchend', (e) => {
-        // do nothing if we didn't start selection
+   
         if (!selectionRectangle.visible()) {
             return;
         }
         e.evt.preventDefault();
-        // update visibility in timeout, so we can check it in click event
+
         setTimeout(() => {
             selectionRectangle.visible(false);
         });
@@ -607,16 +654,15 @@ function stgevents() {
     });
 
 
-    // clicks should select/deselect shapes
     stage.on('click tap', function (e) {
-        // if we are selecting with rect, do nothing
+  
         if (selectionRectangle.visible()) {
             return;
         }
 
 
         console.log(e.target.name());
-        // if click on empty area - remove all selections
+  
         if (e.target === stage || imagesel.hasName('back')===true) {
             tr.nodes([]);
             //tr2.nodes([]);
@@ -624,31 +670,28 @@ function stgevents() {
         }
 
 
-        // do nothing if clicked NOT on our rectangles
+        
         if (!e.target.hasName('ez')) {
             
             return;
         }
 
 
-        // do we pressed shift or ctrl?
+   
         const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
         const isSelected = tr.nodes().indexOf(e.target) >= 0;
 
         if (!metaPressed && !isSelected) {
-            // if no key pressed and the node is not selected
-            // select just one
+
             tr.nodes([e.target]);
             tr.nodes([e.target]);
         } else if (metaPressed && isSelected) {
-            // if we pressed keys and node was selected
-            // we need to remove it from selection:
-            const nodes = tr.nodes().slice(); // use slice to have new copy of array
-            // remove node from array
+          
+            const nodes = tr.nodes().slice(); 
             nodes.splice(nodes.indexOf(e.target), 1);
             tr.nodes(nodes);
         } else if (metaPressed && !isSelected) {
-            // add the node into selection
+          
             const nodes = tr.nodes().concat([e.target]);
             tr.nodes(nodes);
         }
@@ -684,7 +727,7 @@ function addtext() {
      tr2 = new Konva.Transformer({
         node: textNode,
         enabledAnchors: ['middle-left', 'middle-right'],
-        // set minimum width of text
+    
         boundBoxFunc: function (oldBox, newBox) {
             newBox.width = Math.max(30, newBox.width);
             return newBox;
@@ -694,7 +737,7 @@ function addtext() {
         //tr2.nodes([]);
     
     textNode.on('transform', function () {
-        // reset scale, so only with is changing by transformer
+        
         textNode.setAttrs({
             width: textNode.width() * textNode.scaleX(),
             scaleX: 1,
@@ -742,30 +785,26 @@ function addtext() {
     });
 
     textNode.on('dblclick dbltap', () => {
-        // hide text node and transformer:
+     
         this.textNode.hide();
         tr2.hide();
         fontsize.value = textNode.fontSize();
-        // create textarea over canvas with absolute position
-        // first we need to find position for textarea
-        // how to find it?
+ 
 
-        // at first lets find position of text node relative to the stage:
+ 
         var textPosition = textNode.absolutePosition();
 
-        // so position of textarea will be the sum of positions above:
+      
         var areaPosition = {
             x: stage.container().offsetLeft + textPosition.x,
             y: stage.container().offsetTop + textPosition.y,
         };
 
-        // create textarea and style it
+ 
         var textarea = document.createElement('textarea');
         document.body.appendChild(textarea);
 
-        // apply many styles to match text on canvas as close as possible
-        // remember that text rendering on canvas and on the textarea can be different
-        // and sometimes it is hard to make it 100% the same. But we will try...
+    
         textarea.value = textNode.text();
         textarea.style.position = 'absolute';
         textarea.style.top = areaPosition.y + 'px';
@@ -793,8 +832,7 @@ function addtext() {
         }
 
         var px = 0;
-        // also we need to slightly move textarea on firefox
-        // because it jumps a bit
+
         var isFirefox =
             navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
         if (isFirefox) {
@@ -804,9 +842,9 @@ function addtext() {
 
         textarea.style.transform = transform;
 
-        // reset height
+       
         textarea.style.height = 'auto';
-        // after browsers resized it we can set actual value
+       
         textarea.style.height = textarea.scrollHeight + 3 + 'px';
 
         textarea.focus();
@@ -821,10 +859,10 @@ function addtext() {
 
         function setTextareaWidth(newWidth) {
             if (!newWidth) {
-                // set width for placeholder
+              
                 newWidth = textNode.placeholder.length * textNode.fontSize();
             }
-            // some extra fixes on different browsers
+            
             var isSafari = /^((?!chrome|android).)*safari/i.test(
                 navigator.userAgent
             );
@@ -843,13 +881,12 @@ function addtext() {
         }
 
         textarea.addEventListener('keydown', function (e) {
-            // hide on enter
-            // but don't hide on shift + enter
+  
             if (e.keyCode === 13 && !e.shiftKey) {
                 textNode.text(textarea.value);
                 removeTextarea();
             }
-            // on esc do not set value back to node
+           
             if (e.keyCode === 27) {
                 removeTextarea();
             }
@@ -878,6 +915,9 @@ function addtext() {
 var slmode;
 
 function crtpdf() {
+    if (imagedraw[currentpage] != null) {
+        imagedraw[currentpage].moveToTop();
+    }
     stdata[currentpage] = stage.toDataURL({ pixelRatio: 2 });
     var pdf = new jsPDF(slmode, 'pt', [twidth / (4 / 3), theight / (4 / 3)]);
 
@@ -928,7 +968,7 @@ function paintstamp() {
         //stage.setPointersPositions(e);
         if(selectedstamp=true){
         Konva.Image.fromURL(itemURL, function (image) {
-            image.name('ez');
+            image.name('ez3');
             image.position({
                 x: stage.getPointerPosition().x - (twidth * currentpage),
                 y: stage.getPointerPosition().y 
@@ -937,7 +977,7 @@ function paintstamp() {
             image.scaleX(0.030);
             image.scaleY(0.030);
             image.setAttr('source', itemURL);
-            image.draggable(true);
+            image.draggable(false);
             layer.add(image);
             stage.add(layer);
 
@@ -950,7 +990,17 @@ function paintstamp() {
 }
 
     function deselectstamp(){
-     selectedstamp=false;
+        selectedstamp = false;
+
+        stage.off();
+        stgevents();
+
+        stage.on('click', function (evt) {
+        
+            imagesel = evt.target;
+            seltext = evt.target;
+            // drawimg = evt.target;
+        });
 	}
 
     function backgroundfilter(){
@@ -960,41 +1010,7 @@ function paintstamp() {
 	}
 
 
-                var bscale = document.getElementById('bscale');
-            bscale.oninput = function () {
-                //imagesel.bscale(parseFloat(bscale.value));
-                //imagesel.setAttr('bscale', parseFloat(bscale.value));
-              
-                background.scale({ x: bscale.value, y: bscale.value });
-               
-                //console.log(background);
-            };
 
-              var xoff = document.getElementById('xoff');
-            xoff.oninput = function () {
-                //imagesel.bscale(parseFloat(bscale.value));
-                //imagesel.setAttr('bscale', parseFloat(bscale.value));
-                
-                background.crop({
-                    x: 20,
-                    y: 20,
-                    width: 20,
-                    height: 20
-                });
-                console.log(background);
-                
-                //console.log(background);
-            };
-
-              var yoff = document.getElementById('yoff');
-            yoff.oninput = function () {
-                //imagesel.bscale(parseFloat(bscale.value));
-                //imagesel.setAttr('bscale', parseFloat(bscale.value));
-            
-                background.fillPatternOffsetY(yoff.value);
-                
-                //console.log(background);
-            };
 
                 function hide() {
                     if (displayed == true) {
@@ -1015,34 +1031,9 @@ function paintstamp() {
                     frame.hidden = false;
 }
 
-                    var framesize = document.getElementById('framesize');
-framesize.oninput = function () {
-    console.log(imagesel.strokeEnabled());
-    imagesel.filters([Konva.Filters.Blur, Konva.Filters.Brighten, Konva.Filters.Enhance, Grscale, CrtFrame]);
-
-    layer.draw();
-    console.log(imagesel.width());
 
 
-                      
-};
 
-var CrtFrame = function (imageData) {
-    var nPixels = imageData.data.length;
-    var bytesPerPixel = imageData.data.length / 8;
-    //bytesPerPixel = System.Drawing.Bitmap.GetPixelFormatSize(temp.PixelFormat) / 8;
-    var height = imageData.height;
-    var width = imageData.width * 3;
-    console.log("img: " + nPixels + ":" + imageData.width);
-        for (var i = 0; i < height; i ++) {
-            for (j = 0; j < width; j += bytesPerPixel) {
-                imageData.data[i] = 255;
-                imageData.data[i + 1] = 0;
-                imageData.data[i + 2] = 0;
-                
-            }
-        }
-};
 
 var ftcolor = document.getElementById("fontcolour");
 var fttype = document.getElementById("fonttype");
@@ -1063,7 +1054,8 @@ function deletext() {
 }
 
 function topdrawing() {
-    drawimg.moveToTop();
+
+    imagedraw[currentpage].moveToTop();
 }
 
 function dltbackground() {
@@ -1081,9 +1073,4 @@ function slctUp() {
     imagesel.moveToTop();
 }
 
-function cropper() {
-    console.log(imagesel.width());
-    
-    imagesel.cropX(25);
-    console.log(imagesel.width());
-}
+

@@ -31,6 +31,12 @@
             <option value="1">A4 álló</option>
             <option value="2">A4 fekvő</option>
             <option value="3">30x30cm</option>
+            <option value="4">20x30cm álló</option>
+            <option value="5">20x20cm álló</option>
+            <option value="6">30x20cm fekvő</option>
+            <option value="7">40x30cm fekvő</option>
+            <option value="8">A5 álló</option>
+            <option value="9">A5 fekvő</option>
         </select>
         <input type="button" value="Létrehoz" onclick="createalbum()">
         <input type="button" value="<-" onclick="previous()">
@@ -59,11 +65,12 @@
             <div id="drag-drop-area"></div>
             <div id="sideload" class="sideload">
 
-                <img src="1.bmp" alt="kep" width="200" height="150" onclick="klikk();" draggable="true"><br>
+                <img src="background1.jpg" alt="kep" width="200" height="150" onclick="klikk();" draggable="true">
+                <img src="background2.jpg" alt="kep" width="200" height="150" onclick="klikk();" draggable="true">
+                <img src="background3.jpg" alt="kep" width="200" height="150" onclick="klikk();" draggable="true">
+                <img src="1.bmp" alt="kep" width="200" height="150" onclick="klikk();" draggable="true">
 
                 <img src="2.bmp" alt="kep" width="200" height="150" onclick="klikk();" draggable="true">
-                <img src="background1.jpg" alt="kep" width="200" height="150" onclick="klikk();" draggable="true">
-
             </div>
             <div id="paintitems" class="sideload" hidden>
                 <select id="tool">
@@ -72,10 +79,16 @@
                 </select>
 
                 <select id="colourselect">
-                    <option value="red">Piros</option>
+                    <option value="aqua">Aqua</option>
+                    <option value="brown">Barna</option>
                     <option value="black">Fekete</option>
-                    <option value="green">Zöld</option>
+                    <option value="white">Fehér</option>
                     <option value="blue">Kék</option>
+                    <option value="purple">Lila</option>
+                    <option value="red">Piros</option>
+                    <option value="yellow">Sárga</option>
+                    <option value="grey">Szürke</option>
+                    <option value="green">Zöld</option>
                 </select><br>
                 <select id="strokewidth">
                     <option value="1">1-es vastagság</option>
@@ -86,8 +99,8 @@
                 </select>
                 <br>
 
-                <button type="button" onclick="painter()">Ecset kiválasztás</button>
-                <button type="button" onclick="depainter()">Kiválasztó eszköz</button>
+                <button type="button" onclick="painter()">Rajzoló mód</button>
+                <button type="button" onclick="depainter()">Kiválasztó mód</button>
                 <button type="button" onclick="topdrawing()">Rajz réteg legfelül</button><br><br>
                 <button type="button" onclick="slctUp()">Kiválasztott elem legfelül</button><br><br>
                 <button type="button" id="addtext" onclick="addtext()">Szöveg hozzáadása</button>
@@ -95,11 +108,16 @@
                 <button type="button" onclick="modtext()">Szöveg módosítása</button>
                 <select id="fonttype">
                     <option value="Arial">Arial</option>
-                    <option value="Calibri">Calibri</option>
-                    <option value="Kavivanar">Kavivanar</option>
-                    <option value="Garamond">Garamond</option>
-                    <option value="Courier New">Courier New</option>
                     <option value="Brush Script MT">Brush Script MT</option>
+                    <option value="Calibri">Calibri</option>
+                    <option value="Courier New">Courier New</option>
+                    <option value="classic-roman">Classic Roman</option>
+                    <option value="Futura">Futura</option>
+                    <option value="Garamond">Garamond</option>
+                    <option value="Kavivanar">Kavivanar</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Garamond">Garamond</option>
+
                     <option value="Verdana ">Verdana</option>
                 </select>
                 <select id="fontstyle">
@@ -181,33 +199,29 @@
                     <option value="79">79</option>
                     <option value="80">80</option>
                 </select><br>
-                <select id="fontcolour">
-                    <option value="red">Piros</option>
-                    <option value="black">Fekete</option>
-                    <option value="green">Zöld</option>
-                    <option value="blue">Kék</option>
-                </select>
+                         <select id="fontcolour">
+                             <option value="aqua">Aqua</option>
+                             <option value="brown">Barna</option>
+                             <option value="black">Fekete</option>
+                             <option value="white">Fehér</option>
+                             <option value="blue">Kék</option>
+                             <option value="purple">Lila</option>
+                             <option value="red">Piros</option>
+                             <option value="yellow">Sárga</option>
+                             <option value="grey">Szürke</option>
+                             <option value="green">Zöld</option>
+                         </select>
 
                 <textarea id="tx" rows="10" style="resize: none; overflow-y: scroll;"></textarea>
             </div>
             <div id="filters" class="sideload" hidden>
                 <div class="slidecontainer">
-                    <label for="blur">Elmosódás</label>
-                    <input type="range" min="0" max="100" value="0" id="blur">
                     <label for="brighten">Fényerő</label>
                     <input type="range" min="-1" max="1" step="0.05" value="0" id="brighten">
                     <label for="enhance">Kiemelés</label>
                     <input id="enhance" type="range" min="-1" max="1" step="0.01" value="20" />
                     <label for="grayscale">Szürkeárnyalat</label>
                     <button type="button" id="grayscale">Átalakít</button><br><br>
-                    <button type="button" id="crop" onclick="cropper();">Kép vágása</button><br><br>
-                    <button type="button" id="filterbackg" onclick="backgroundfilter()">Háttér kiválasztása</button><br>
-                    <label for="bscale">Háttér nagyság</label>
-                    <input type="range" min="0" max="1.50" value="0" step="0.10" id="bscale"><br>
-                    <label for="xoff">Háttér eltolása vízszintesen</label>
-                    <input type="range" min="0" max="300" value="0" id="xoff">
-                    <label for="yoff">Háttér eltolása függőlegesen</label>
-                    <input type="range" min="0" max="300" value="0" id="yoff"><br><br>
                     <button type="button" id="deselect" onclick="deselectF()">Kijelölés megszüntetése</button>
 
                 </div>
@@ -215,11 +229,15 @@
             <div id="stamps" class="sideload" hidden>
                 <button type="button" id="desstamp" onclick="deselectstamp()">Pecsét letiltása</button>
                 <img src="star.png" alt="kep" width="200" height="150" onclick="paintstamp();" draggable="true">
-                <img src="ball.jpg" alt="kep" width="200" height="150" onclick="paintstamp();" draggable="true">
+                <img src="hottea.png" alt="kep" width="200" height="150" onclick="paintstamp();" draggable="true">
+                <img src="bubblechat.png" alt="kep" width="200" height="150" onclick="paintstamp();" draggable="true">
+                <img src="drawingbush.bmp" alt="kep" width="200" height="150" onclick="paintstamp();" draggable="true">
+                <img src="education.png" alt="kep" width="200" height="150" onclick="paintstamp();" draggable="true">
             </div>
             <div id="frame" class="sideload" hidden>
-                    <label for="blur">Keret nagysága</label>
-                    <input type="range" min="0" max="200" value="0" class="slider" id="framesize">
+
+                <img src="frame1.png" alt="kep" width="200" height="150" onclick="klikk();" draggable="true">
+                <img src="frame2.png" alt="kep" width="200" height="150" onclick="klikk();" draggable="true">
 
             </div>
         </div>
